@@ -8,7 +8,7 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
-const int WW = 394;
+const int WW = 384;
 const int WH = 800;
 
 #include "Platform.hpp"
@@ -35,6 +35,8 @@ int main() {
     const int numFloorTiles = 10;
     const int numPlatforms = 54;
     Platform platforms[numPlatforms];
+
+    srand(time(0));
     for (int i = 0; i < (numPlatforms - numFloorTiles) / 4; i++)
     {
         platforms[i].setTexture(&(platformTextures[rand() % numPlatformTextures]));
@@ -68,6 +70,7 @@ int main() {
 
     bool rightKeyDown = false;
     bool leftKeyDown = false;
+    bool jumpKeyDown = false;
 
     while (window.isOpen())
     {
@@ -97,7 +100,7 @@ int main() {
                 }
                 if (event.key.code == Keyboard::Key::Space)
                 {
-                    player.jump(deltaTime);
+                    jumpKeyDown = true;
                 }
             }
             if (event.type == Event::KeyReleased)
@@ -109,6 +112,10 @@ int main() {
                 if (event.key.code == Keyboard::Key::Left)
                 {
                     leftKeyDown = false;
+                }
+                if (event.key.code == Keyboard::Key::Space)
+                {
+                    jumpKeyDown = false;
                 }
             }
         }
@@ -126,6 +133,10 @@ int main() {
         if (!rightKeyDown && !leftKeyDown)
         {
             player.stopX();
+        }
+        if (jumpKeyDown)
+        {
+            player.jump();
         }
 
         player.update(deltaTime, platforms, numPlatforms);
