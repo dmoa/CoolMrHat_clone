@@ -25,6 +25,6 @@ public:
     void moveLeft(Time deltaTime);
     void moveRight(Time deltaTime);
     void stopX();
-    void jump(Time deltaTime);
+    void jump();
     void update(Time deltatime, Platform* platform, int numPlatforms);
 };

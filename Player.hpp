@@ -12,7 +12,7 @@ Player::Player(Texture* _textureRight, sf::Texture* _textureLeft)
     height = sprite.getLocalBounds().height;
 
     xv = 0;
-    setXV = 200;
+    setXV = 400;
 
     yv = 0;
     oldY = sprite.getPosition().y;
@@ -49,7 +49,7 @@ void Player::stopX()
     xv = 0;
 }
 
-void Player::jump(Time deltaTime)
+void Player::jump()
 {
     if (yv == 0)
     {
