@@ -16,13 +16,15 @@ private:
     float oldY;
     float xv;
     float yv;
-    float acceleration;
+    float setXV;
+    float yv_acceleration;
     bool isColliding(Platform platform);
 public:
     Player(Texture* _textureRight, Texture* _textureLeft);
     Sprite getSprite();
     void moveLeft(Time deltaTime);
     void moveRight(Time deltaTime);
+    void stopX();
     void jump(Time deltaTime);
     void update(Time deltatime, Platform* platform, int numPlatforms);
 };

@@ -1,22 +1,22 @@
 #include "Player.h"
-
+#include <iostream>
 Player::Player(Texture* _textureRight, sf::Texture* _textureLeft)
 {    
     textureRight = _textureRight;
     textureLeft = _textureLeft;
     direction = 1;
     sprite.setTexture(*textureRight);
-    sprite.setPosition(100, 100);
+    sprite.setPosition(200, 100);
 
     width = sprite.getLocalBounds().width;
     height = sprite.getLocalBounds().height;
 
-    xv = 400;
-    yv = 0;
-    oldX = sprite.getPosition().x;
-    oldY = sprite.getPosition().y;
+    xv = 0;
+    setXV = 200;
 
-    acceleration = 15;
+    yv = 0;
+    oldY = sprite.getPosition().y;
+    yv_acceleration = 15;
 }
 
 Sprite Player::getSprite() 
@@ -26,8 +26,7 @@ Sprite Player::getSprite()
 
 void Player::moveLeft(Time deltaTime) 
 {
-    oldX = sprite.getPosition().x;
-    sprite.setPosition(sprite.getPosition().x - xv * deltaTime.asSeconds(), sprite.getPosition().y);
+    xv = - setXV;
     if (direction == 1)
     {
         direction = -1;
@@ -37,13 +36,17 @@ void Player::moveLeft(Time deltaTime)
 
 void Player::moveRight(Time deltaTime) 
 {
-    oldX = sprite.getPosition().x;
-    sprite.setPosition(sprite.getPosition().x + xv * deltaTime.asSeconds(), sprite.getPosition().y);
+    xv = setXV;
     if (direction == -1)
     {
         direction = 1;
         sprite.setTexture(*textureRight);
     }
+}
+
+void Player::stopX()
+{
+    xv = 0;
 }
 
 void Player::jump(Time deltaTime)
@@ -57,8 +60,10 @@ void Player::jump(Time deltaTime)
 void Player::update(Time deltaTime, Platform* platforms, int numPlatforms)
 {
     oldY = sprite.getPosition().y;
+    oldX = sprite.getPosition().x;
 
-    yv += acceleration * deltaTime.asSeconds();
+    sprite.setPosition(sprite.getPosition().x + xv * deltaTime.asSeconds(), sprite.getPosition().y);
+    yv += yv_acceleration * deltaTime.asSeconds();
     sprite.setPosition(sprite.getPosition().x, sprite.getPosition().y + yv);
 
     if (sprite.getPosition().y + height > WH)
@@ -77,26 +82,23 @@ void Player::update(Time deltaTime, Platform* platforms, int numPlatforms)
 
     for (int i = 0; i < numPlatforms; i++)
     {
-        if (isColliding(platforms[i]))
+        if (isColliding(platforms[i]) && oldY + height <= platforms[i].getY())
         {
-            if (oldY + height <= platforms[i].getY())
-            {
-                sprite.setPosition(sprite.getPosition().x, platforms[i].getY() - height);
-                yv = 0;
-            }
-            if (oldX >= platforms[i].getX() + platforms[i].getWidth())
-            {
-                sprite.setPosition(platforms[i].getX() + platforms[i].getWidth(), sprite.getPosition().y);
-            }
-            if (oldX + width <= platforms[i].getX())
-            {
-                sprite.setPosition(platforms[i].getX() - width, sprite.getPosition().y);
-            }
-            if (oldY >= platforms[i].getY() + platforms[i].getHeight()) 
-            {
-                sprite.setPosition(sprite.getPosition().x, platforms[i].getY() + platforms[i].getHeight());
-                yv = 0;
-            }
+            sprite.setPosition(sprite.getPosition().x, platforms[i].getY() - height);
+            yv = 0;
+        }
+        if (isColliding(platforms[i]) && oldX >= platforms[i].getX() + platforms[i].getWidth())
+        {
+            sprite.setPosition(platforms[i].getX() + platforms[i].getWidth(), sprite.getPosition().y);
+        }
+        if (isColliding(platforms[i]) && oldX + width <= platforms[i].getX())
+        {
+            sprite.setPosition(platforms[i].getX() - width, sprite.getPosition().y);
+        }
+        if (isColliding(platforms[i]) && oldY >= platforms[i].getY() + platforms[i].getHeight()) 
+        {
+            sprite.setPosition(sprite.getPosition().x, platforms[i].getY() + platforms[i].getHeight());
+            yv = 0;
         }
     }
 
@@ -104,6 +106,7 @@ void Player::update(Time deltaTime, Platform* platforms, int numPlatforms)
 
 bool Player::isColliding(Platform platform)
 {
+    //std::cout << sprite.getPosition().x << std::endl;
     return sprite.getPosition().x + width > platform.getX()
         && sprite.getPosition().x < platform.getX() + platform.getWidth()
         && sprite.getPosition().y + height > platform.getY()

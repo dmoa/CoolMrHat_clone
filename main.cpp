@@ -123,6 +123,10 @@ int main() {
         {
             player.moveLeft(deltaTime);
         }
+        if (!rightKeyDown && !leftKeyDown)
+        {
+            player.stopX();
+        }
 
         player.update(deltaTime, platforms, numPlatforms);
 
