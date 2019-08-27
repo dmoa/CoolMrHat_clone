@@ -1,5 +1,6 @@
 #include "Player.h"
-#include <iostream>
+//#include <iostream>
+
 Player::Player(Texture* _textureRight, sf::Texture* _textureLeft)
 {    
     textureRight = _textureRight;
@@ -16,7 +17,7 @@ Player::Player(Texture* _textureRight, sf::Texture* _textureLeft)
 
     yv = 0;
     oldY = sprite.getPosition().y;
-    yv_acceleration = 15;
+    yv_acceleration = 1000;
 }
 
 Sprite Player::getSprite() 
@@ -53,7 +54,7 @@ void Player::jump()
 {
     if (yv == 0)
     {
-        yv = -5;
+        yv = -400;
     }
 }
 
@@ -64,7 +65,7 @@ void Player::update(Time deltaTime, Platform* platforms, int numPlatforms)
 
     sprite.setPosition(sprite.getPosition().x + xv * deltaTime.asSeconds(), sprite.getPosition().y);
     yv += yv_acceleration * deltaTime.asSeconds();
-    sprite.setPosition(sprite.getPosition().x, sprite.getPosition().y + yv);
+    sprite.setPosition(sprite.getPosition().x, sprite.getPosition().y + yv * deltaTime.asSeconds());
 
     if (sprite.getPosition().y + height > WH)
     {
@@ -82,33 +83,24 @@ void Player::update(Time deltaTime, Platform* platforms, int numPlatforms)
 
     for (int i = 0; i < numPlatforms; i++)
     {
-        if (isColliding(platforms[i]) && oldY + height <= platforms[i].getY())
+        if (isColliding(sprite, platforms[i].getSprite()) && oldY + height <= platforms[i].getY())
         {
             sprite.setPosition(sprite.getPosition().x, platforms[i].getY() - height);
             yv = 0;
         }
-        if (isColliding(platforms[i]) && oldX >= platforms[i].getX() + platforms[i].getWidth())
+        if (isColliding(sprite, platforms[i].getSprite()) && oldX >= platforms[i].getX() + platforms[i].getWidth())
         {
             sprite.setPosition(platforms[i].getX() + platforms[i].getWidth(), sprite.getPosition().y);
         }
-        if (isColliding(platforms[i]) && oldX + width <= platforms[i].getX())
+        if (isColliding(sprite, platforms[i].getSprite()) && oldX + width <= platforms[i].getX())
         {
             sprite.setPosition(platforms[i].getX() - width, sprite.getPosition().y);
         }
-        if (isColliding(platforms[i]) && oldY >= platforms[i].getY() + platforms[i].getHeight()) 
+        if (isColliding(sprite, platforms[i].getSprite()) && oldY >= platforms[i].getY() + platforms[i].getHeight()) 
         {
             sprite.setPosition(sprite.getPosition().x, platforms[i].getY() + platforms[i].getHeight());
             yv = 0;
         }
     }
 
-}
-
-bool Player::isColliding(Platform platform)
-{
-    //std::cout << sprite.getPosition().x << std::endl;
-    return sprite.getPosition().x + width > platform.getX()
-        && sprite.getPosition().x < platform.getX() + platform.getWidth()
-        && sprite.getPosition().y + height > platform.getY()
-        && sprite.getPosition().y < platform.getY() + platform.getHeight();
 }
