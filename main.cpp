@@ -11,8 +11,20 @@ using namespace sf;
 const int WW = 384;
 const int WH = 800;
 
+
 #include "Platform.hpp"
 #include "Player.hpp"
+#include "Enemy.hpp"
+
+// AABB collision
+bool isColliding(Sprite sprite1, Sprite sprite2)
+{
+    //std::cout << sprite.getPosition().x << std::endl;
+    return sprite2.getPosition().x + sprite2.getLocalBounds().width > sprite1.getPosition().x
+        && sprite2.getPosition().x < sprite1.getPosition().x + sprite1.getLocalBounds().width
+        && sprite2.getPosition().y + sprite2.getLocalBounds().height > sprite1.getPosition().y
+        && sprite2.getPosition().y < sprite1.getPosition().y + sprite1.getLocalBounds().height;
+}
 
 int main() {
     RenderWindow window(VideoMode(WW, WH), "Cool Mr Hat Clone");
@@ -20,9 +32,19 @@ int main() {
 
     Texture playerTextureRight;
     playerTextureRight.loadFromFile("imgs/playerRight.png");
+
+    window.setIcon(playerTextureRight.getSize().x, playerTextureRight.getSize().y,
+                    playerTextureRight.copyToImage().getPixelsPtr());
+
     Texture playerTextureLeft;
     playerTextureLeft.loadFromFile("imgs/playerLeft.png");
     Player player(&playerTextureRight, &playerTextureLeft);
+
+    Texture enemyTextureRight;
+    enemyTextureRight.loadFromFile("imgs/enemyRight.png");
+    Texture enemyTextureLeft;
+    enemyTextureLeft.loadFromFile("imgs/enemyLeft.png");
+    Enemy enemy(&enemyTextureRight, &enemyTextureLeft, true);
     
     const int numPlatformTextures = 3;
     Texture platformTextures[numPlatformTextures];
@@ -140,6 +162,7 @@ int main() {
         }
 
         player.update(deltaTime, platforms, numPlatforms);
+        enemy.update(deltaTime, platforms, numPlatforms);
 
 
         window.clear();
@@ -148,7 +171,9 @@ int main() {
         {
             window.draw(platforms[i].getSprite());
         }
+        window.draw(enemy.getSprite());
         window.display();
     }
+
     return 0;
 }
