@@ -1,5 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <vector>
+#include "Enemy.h"
+
 using namespace sf;
 
 bool isColliding(Sprite sprite1, Sprite sprite2);
@@ -20,6 +23,8 @@ class Player
         float yv;
         float setXV;
         float yv_acceleration;
+        
+        bool isDead;
     public:
         Player(Texture* _textureRight, Texture* _textureLeft);
         Sprite getSprite();
@@ -27,5 +32,7 @@ class Player
         void moveRight(Time deltaTime);
         void stopX();
         void jump();
-        void update(Time deltatime, Platform* platform, int numPlatforms);
+        void die();
+        bool getIsDead();
+        void update(Time deltatime, Platform* platform, int numPlatforms, std::vector <Enemy> &enemies);
 };

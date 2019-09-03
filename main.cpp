@@ -1,6 +1,7 @@
 #include <string>
 #include <cstdlib>
 #include <ctime>
+#include <vector>
 
 #include <typeinfo>
 #include <iostream>
@@ -16,15 +17,7 @@ const int WH = 800;
 #include "Player.hpp"
 #include "Enemy.hpp"
 
-// AABB collision
-bool isColliding(Sprite sprite1, Sprite sprite2)
-{
-    //std::cout << sprite.getPosition().x << std::endl;
-    return sprite2.getPosition().x + sprite2.getLocalBounds().width > sprite1.getPosition().x
-        && sprite2.getPosition().x < sprite1.getPosition().x + sprite1.getLocalBounds().width
-        && sprite2.getPosition().y + sprite2.getLocalBounds().height > sprite1.getPosition().y
-        && sprite2.getPosition().y < sprite1.getPosition().y + sprite1.getLocalBounds().height;
-}
+#include "helper.cpp"
 
 int main() {
     RenderWindow window(VideoMode(WW, WH), "Cool Mr Hat Clone");
@@ -44,8 +37,16 @@ int main() {
     enemyTextureRight.loadFromFile("imgs/enemyRight.png");
     Texture enemyTextureLeft;
     enemyTextureLeft.loadFromFile("imgs/enemyLeft.png");
-    Enemy enemy(&enemyTextureRight, &enemyTextureLeft, true);
-    
+    Texture enemyTextureRight2;
+    enemyTextureRight2.loadFromFile("imgs/enemyRight2.png");
+    Texture enemyTextureLeft2;
+    enemyTextureLeft2.loadFromFile("imgs/enemyLeft2.png");
+
+    std::vector <Enemy> enemies;
+    enemies.push_back(Enemy (&enemyTextureRight, &enemyTextureLeft, &enemyTextureRight2, &enemyTextureLeft2, true));
+    float enemySpawnF = 2;
+    float enemySpawnTimer = enemySpawnF;
+
     const int numPlatformTextures = 3;
     Texture platformTextures[numPlatformTextures];
     for (int i = 0; i < numPlatformTextures; i++)
@@ -57,36 +58,7 @@ int main() {
     const int numFloorTiles = 10;
     const int numPlatforms = 54;
     Platform platforms[numPlatforms];
-
-    srand(time(0));
-    for (int i = 0; i < (numPlatforms - numFloorTiles) / 4; i++)
-    {
-        platforms[i].setTexture(&(platformTextures[rand() % numPlatformTextures]));
-        platforms[i].setPosition(0, i * smallPlatformSize);
-    }
-    for (int i = (numPlatforms - numFloorTiles) / 4; i < (numPlatforms - numFloorTiles) / 2; i++)
-    {
-        platforms[i].setTexture(&(platformTextures[rand() % numPlatformTextures]));
-        platforms[i].setPosition(0,(i + 3) * smallPlatformSize);
-    }
-
-
-    for (int i = (numPlatforms - numFloorTiles) / 2; i < (numPlatforms - numFloorTiles) / 4 * 3; i++)
-    {
-        platforms[i].setTexture(&(platformTextures[rand() % numPlatformTextures]));
-        platforms[i].setPosition(WW - smallPlatformSize, (i - (numPlatforms - numFloorTiles) / 2) * smallPlatformSize);
-    }
-    for (int i = (numPlatforms - numFloorTiles) / 4 * 3; i < (numPlatforms - numFloorTiles); i++)
-    {
-        platforms[i].setTexture(&(platformTextures[rand() % numPlatformTextures]));
-        platforms[i].setPosition(WW - smallPlatformSize, (i+ 3 - (numPlatforms - numFloorTiles) / 2) * smallPlatformSize);
-    }
-
-    for (int i = 44; i < numPlatforms; i++)
-    {
-        platforms[i].setTexture(&(platformTextures[rand() % numPlatformTextures]));
-        platforms[i].setPosition((i - 44 + 1) * smallPlatformSize, WH - smallPlatformSize);
-    }
+    generatePlatforms(smallPlatformSize, numFloorTiles, numPlatforms, platformTextures, numPlatformTextures, platforms);
 
     Clock clock;
 
@@ -142,36 +114,60 @@ int main() {
             }
         }
 
-
-
-        if (rightKeyDown)
+        if (!player.getIsDead())
         {
-            player.moveRight(deltaTime);
-        }
-        if (leftKeyDown)
-        {
-            player.moveLeft(deltaTime);
-        }
-        if (!rightKeyDown && !leftKeyDown)
-        {
-            player.stopX();
-        }
-        if (jumpKeyDown)
-        {
-            player.jump();
+            if (rightKeyDown)
+            {
+                player.moveRight(deltaTime);
+            }
+            if (leftKeyDown)
+            {
+                player.moveLeft(deltaTime);
+            }
+            if ((!rightKeyDown && !leftKeyDown) || (rightKeyDown && leftKeyDown))
+            {
+                player.stopX();
+            }
+            if (jumpKeyDown)
+            {
+                player.jump();
+            }
         }
 
-        player.update(deltaTime, platforms, numPlatforms);
-        enemy.update(deltaTime, platforms, numPlatforms);
 
+        player.update(deltaTime, platforms, numPlatforms, enemies);
 
+        for (int i = 0; i < enemies.size(); i++)
+        {
+            enemies[i].update(deltaTime, platforms, numPlatforms);
+        }
+        enemySpawnTimer -= deltaTime.asSeconds();
+        if (enemySpawnTimer < 0)
+        {
+            enemySpawnTimer = enemySpawnF;
+            srand(time(0));
+            int direction = rand() % 2;
+            enemies.push_back(Enemy (&enemyTextureRight, &enemyTextureLeft, &enemyTextureRight2, &enemyTextureLeft2, direction));
+        }
+
+        for (int i = 0; i < enemies.size(); i++)
+        {
+            if (enemies[i].canDelete())
+            {
+                enemies.erase(enemies.begin() + i);
+            }
+        }
+    
         window.clear();
         window.draw(player.getSprite());
         for (int i = 0; i < numPlatforms; i++)
         {
             window.draw(platforms[i].getSprite());
         }
-        window.draw(enemy.getSprite());
+        for (int i = 0; i < enemies.size(); i++)
+        {
+            window.draw(enemies[i].getSprite());
+        }
         window.display();
     }
 

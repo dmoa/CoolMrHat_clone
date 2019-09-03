@@ -19,9 +19,19 @@ class Enemy
 
         Texture* textureRight;
         Texture* textureLeft;
+        Texture* textureRight2;
+        Texture* textureLeft2;
         Sprite sprite;
+
+        float animationSpeed;
+        float timer;
+
+        bool isDead;
     public:
-        Enemy(Texture* _textureRight, Texture* _textureLeft, bool facingRight);
+        Enemy(Texture* _textureRight, Texture* _textureLeft, Texture* _textureRight2, Texture* _textureLeft2, int _facingRight);
         Sprite getSprite();
         void update(Time deltaTime, Platform* platforms, int numPlatforms);
+        void die();
+        bool getIsDead();
+        bool canDelete();
 };

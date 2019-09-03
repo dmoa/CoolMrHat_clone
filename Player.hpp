@@ -1,4 +1,5 @@
 #include "Player.h"
+
 //#include <iostream>
 
 Player::Player(Texture* _textureRight, sf::Texture* _textureLeft)
@@ -18,6 +19,8 @@ Player::Player(Texture* _textureRight, sf::Texture* _textureLeft)
     yv = 0;
     oldY = sprite.getPosition().y;
     yv_acceleration = 1000;
+
+    isDead = false;
 }
 
 Sprite Player::getSprite() 
@@ -27,11 +30,14 @@ Sprite Player::getSprite()
 
 void Player::moveLeft(Time deltaTime) 
 {
-    xv = - setXV;
-    if (direction == 1)
+    if (!isDead)
     {
-        direction = -1;
-        sprite.setTexture(*textureLeft);
+        xv = - setXV;
+        if (direction == 1)
+        {
+            direction = -1;
+            sprite.setTexture(*textureLeft);
+        }
     }
 }
 
@@ -58,7 +64,19 @@ void Player::jump()
     }
 }
 
-void Player::update(Time deltaTime, Platform* platforms, int numPlatforms)
+void Player::die()
+{
+    yv = -600;
+    isDead = true;
+    xv = 0;
+}
+
+bool Player::getIsDead()
+{
+    return isDead;
+}
+
+void Player::update(Time deltaTime, Platform* platforms, int numPlatforms, std::vector <Enemy> &enemies)
 {
     oldY = sprite.getPosition().y;
     oldX = sprite.getPosition().x;
@@ -67,39 +85,57 @@ void Player::update(Time deltaTime, Platform* platforms, int numPlatforms)
     yv += yv_acceleration * deltaTime.asSeconds();
     sprite.setPosition(sprite.getPosition().x, sprite.getPosition().y + yv * deltaTime.asSeconds());
 
-    if (sprite.getPosition().y + height > WH)
+    if (!isDead)
     {
-        yv = 0;
-        sprite.setPosition(sprite.getPosition().x, WH - height);
-    }
-    if (sprite.getPosition().x + width > WW)
-    {
-        sprite.setPosition(WW - width, sprite.getPosition().y);
-    }
-    if (sprite.getPosition().x < 0)
-    {
-        sprite.setPosition(0, sprite.getPosition().y);
-    }
+        if (sprite.getPosition().y + height > WH)
+        {
+            yv = 0;
+            sprite.setPosition(sprite.getPosition().x, WH - height);
+        }
+        if (sprite.getPosition().x + width > WW)
+        {
+            sprite.setPosition(WW - width, sprite.getPosition().y);
+        }
+        if (sprite.getPosition().x < 0)
+        {
+            sprite.setPosition(0, sprite.getPosition().y);
+        }
 
-    for (int i = 0; i < numPlatforms; i++)
-    {
-        if (isColliding(sprite, platforms[i].getSprite()) && oldY + height <= platforms[i].getY())
+        for (int i = 0; i < numPlatforms; i++)
         {
-            sprite.setPosition(sprite.getPosition().x, platforms[i].getY() - height);
-            yv = 0;
+            if (isColliding(sprite, platforms[i].getSprite()) && oldY + height <= platforms[i].getY())
+            {
+                sprite.setPosition(sprite.getPosition().x, platforms[i].getY() - height);
+                yv = 0;
+            }
+            if (isColliding(sprite, platforms[i].getSprite()) && oldX >= platforms[i].getX() + platforms[i].getWidth())
+            {
+                sprite.setPosition(platforms[i].getX() + platforms[i].getWidth(), sprite.getPosition().y);
+            }
+            if (isColliding(sprite, platforms[i].getSprite()) && oldX + width <= platforms[i].getX())
+            {
+                sprite.setPosition(platforms[i].getX() - width, sprite.getPosition().y);
+            }
+            if (isColliding(sprite, platforms[i].getSprite()) && oldY >= platforms[i].getY() + platforms[i].getHeight()) 
+            {
+                sprite.setPosition(sprite.getPosition().x, platforms[i].getY() + platforms[i].getHeight());
+                yv = 0;
+            }
         }
-        if (isColliding(sprite, platforms[i].getSprite()) && oldX >= platforms[i].getX() + platforms[i].getWidth())
+
+        for (int i = 0; i < enemies.size(); i++)
         {
-            sprite.setPosition(platforms[i].getX() + platforms[i].getWidth(), sprite.getPosition().y);
-        }
-        if (isColliding(sprite, platforms[i].getSprite()) && oldX + width <= platforms[i].getX())
-        {
-            sprite.setPosition(platforms[i].getX() - width, sprite.getPosition().y);
-        }
-        if (isColliding(sprite, platforms[i].getSprite()) && oldY >= platforms[i].getY() + platforms[i].getHeight()) 
-        {
-            sprite.setPosition(sprite.getPosition().x, platforms[i].getY() + platforms[i].getHeight());
-            yv = 0;
+            if (isColliding(sprite, enemies[i].getSprite()) && !enemies[i].getIsDead())
+            {   
+                if (oldY + height <= enemies[i].getSprite().getPosition().y)
+                {
+                    enemies[i].die();
+                }
+                else
+                { 
+                    die();
+                }
+            }
         }
     }
 
