@@ -13,13 +13,17 @@ const int WW = 384;
 const int WH = 800;
 
 
+#include "Hat.hpp"
 #include "Platform.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
 
-#include "helper.cpp"
+#include "tools/helper.cpp"
 
-int main() {
+#include "tools/TextureHolder.cpp"
+
+int main() 
+{
     RenderWindow window(VideoMode(WW, WH), "Cool Mr Hat Clone");
     window.setVerticalSyncEnabled(true);
 
@@ -41,6 +45,13 @@ int main() {
     enemyTextureRight2.loadFromFile("imgs/enemyRight2.png");
     Texture enemyTextureLeft2;
     enemyTextureLeft2.loadFromFile("imgs/enemyLeft2.png");
+
+    const int numHatTextures = 3;
+    Texture hatTextures[numHatTextures];
+    for (int i = 0; i < numHatTextures; i++)
+    {
+        hatTextures[i].loadFromFile("imgs/hat" + std::to_string(i + 1) + ".png");
+    }
 
     std::vector <Enemy> enemies;
     enemies.push_back(Enemy (&enemyTextureRight, &enemyTextureLeft, &enemyTextureRight2, &enemyTextureLeft2, true));
@@ -168,6 +179,11 @@ int main() {
         {
             window.draw(enemies[i].getSprite());
         }
+        for (int i = 0; i < player.getNumHats(); i++)
+        {
+            window.draw(player.getHat(i).getSprite());
+        }
+
         window.display();
     }
 

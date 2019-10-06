@@ -23,6 +23,8 @@ class Player
         float yv;
         float setXV;
         float yv_acceleration;
+
+        std::vector <Hat*> hats;
         
         bool isDead;
     public:
@@ -35,4 +37,7 @@ class Player
         void die();
         bool getIsDead();
         void update(Time deltatime, Platform* platform, int numPlatforms, std::vector <Enemy> &enemies);
+        void addHat(Hat* hat);
+        Hat getHat(int index);
+        int getNumHats();
 };

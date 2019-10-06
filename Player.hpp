@@ -140,3 +140,18 @@ void Player::update(Time deltaTime, Platform* platforms, int numPlatforms, std::
     }
 
 }
+
+void Player::addHat(Hat* hat)
+{
+    hats.push_back(hat);
+}
+
+Hat Player::getHat(int index)
+{
+    return *hats[index];
+}
+
+int Player::getNumHats()
+{
+    return hats.size();
+}
