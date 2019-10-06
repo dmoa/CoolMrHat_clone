@@ -18,7 +18,7 @@ Texture& TextureHolder::getTexture(string const& filename)
     // we use the arrow operator, because instance is a pointer, and we want one value in "instance"
     auto m = instance->textures;
     // find returns key (filename) & value (the actual texture) IF IT EXISTS
-    auto keyValuePair = m.find(filename);
+    auto keyValuePair = m.find("imgs/" + filename);
     // if keyValuePair DOES NOT EQUAL to out of bounds, i.e. it exists in m
     if (keyValuePair != m.end())
     {

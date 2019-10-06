@@ -27,6 +27,8 @@ int main()
     RenderWindow window(VideoMode(WW, WH), "Cool Mr Hat Clone");
     window.setVerticalSyncEnabled(true);
 
+    TextureHolder::getTexture("playerRight.png");
+
     Texture playerTextureRight;
     playerTextureRight.loadFromFile("imgs/playerRight.png");
 
