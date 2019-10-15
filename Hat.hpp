@@ -6,6 +6,8 @@ Hat::Hat(Texture* _texture)
 {
     texture = _texture;
     sprite.setTexture(*texture);
+    onEntity = true;
+    yv = 0;
 }
 
 Hat::Hat() {}
@@ -24,7 +26,7 @@ Sprite Hat::getDrawableSprite(int scale)
 
 void Hat::update(Time deltaTime)
 {
-
+    //yv += 300 * deltaTime.asSeconds();
 }
 
 void Hat::setPosition(float x, float y)

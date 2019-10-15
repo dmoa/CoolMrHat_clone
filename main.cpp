@@ -62,6 +62,8 @@ int main()
     float enemySpawnF = 2;
     float enemySpawnTimer = enemySpawnF;
 
+    std::vector <Hat> worldHats;
+
     const int numPlatformTextures = 3;
     Texture platformTextures[numPlatformTextures];
     for (int i = 0; i < numPlatformTextures; i++)
@@ -150,7 +152,7 @@ int main()
         }
 
 
-        player.update(deltaTime, platforms, numPlatforms, enemies);
+        player.update(deltaTime, platforms, numPlatforms, enemies, worldHats);
 
         for (int i = 0; i < enemies.size(); i++)
         {

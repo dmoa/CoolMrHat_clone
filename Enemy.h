@@ -30,12 +30,13 @@ class Enemy
 
         Hat hat;
     public:
-        Enemy(Texture* _textureRight, Texture* _textureLeft, Texture* _textureRight2, Texture* _textureLeft2, int _facingRight, Texture* _hatTexture);
+        Enemy(Texture* _textureRight, Texture* _textureLeft, Texture* _textureRight2, Texture* _textureLeft2, 
+            int _facingRight, Texture* _hatTexture);
         Sprite getSprite();
         Sprite getDrawableSprite(int scale);
         Hat getHat();
         void update(Time deltaTime, Platform* platforms, int numPlatforms);
-        void die();
+        void die(std::vector <Hat> &worldHats);
         bool getIsDead();
         bool canDelete();
 };

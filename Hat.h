@@ -7,6 +7,8 @@ class Hat
     private:
         Sprite sprite;
         Texture* texture;
+        bool onEntity;
+        float yv;
     public:
         Hat();
         Hat(Texture* _texture);

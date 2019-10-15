@@ -37,7 +37,7 @@ class Player
         void jump();
         void die();
         bool getIsDead();
-        void update(Time deltatime, Platform* platform, int numPlatforms, std::vector <Enemy> &enemies);
+        void update(Time deltatime, Platform* platform, int numPlatforms, std::vector <Enemy> &enemies, std::vector <Hat> &worldHats);
         void addHat(Hat* hat);
         Hat getHat(int index);
         int getNumHats();

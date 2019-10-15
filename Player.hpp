@@ -86,7 +86,7 @@ bool Player::getIsDead()
     return isDead;
 }
 
-void Player::update(Time deltaTime, Platform* platforms, int numPlatforms, std::vector <Enemy> &enemies)
+void Player::update(Time deltaTime, Platform* platforms, int numPlatforms, std::vector <Enemy> &enemies, std::vector <Hat> &worldHats)
 {
     oldY = sprite.getPosition().y;
     oldX = sprite.getPosition().x;
@@ -139,7 +139,7 @@ void Player::update(Time deltaTime, Platform* platforms, int numPlatforms, std::
             {   
                 if (oldY + height <= enemies[i].getSprite().getPosition().y)
                 {
-                    enemies[i].die();
+                    enemies[i].die(worldHats);
                 }
                 else
                 { 

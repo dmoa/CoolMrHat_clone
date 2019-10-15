@@ -59,10 +59,13 @@ Hat Enemy::getHat()
     return hat;
 }
 
-void Enemy::die()
+void Enemy::die(std::vector <Hat> &worldHats)
 {
     yv = -400;
     isDead = true;
+    worldHats.push_back(hat);
+    hat = NULL;
+
 }
 
 bool Enemy::getIsDead()
@@ -157,6 +160,8 @@ void Enemy::update(Time deltaTime, Platform* platforms, int numPlatforms)
     {
         sprite.setPosition(sprite.getPosition().x + xv * deltaTime.asSeconds(), sprite.getPosition().y);
     }
-
-    hat.setPosition(sprite.getPosition().x, sprite.getPosition().y - 24);
+    if (hat != 0) 
+    {
+        hat.setPosition(sprite.getPosition().x, sprite.getPosition().y - 28);
+    }
 }
