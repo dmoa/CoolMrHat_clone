@@ -1,42 +1,47 @@
 #include "TextureHolder.h"
-
 #include <assert.h>
 
-// lowkey creating an instance, but it's being assigned to the pointer of itself, so it doesn't get a new name
-TextureHolder* TextureHolder::instance = nullptr;
+using namespace sf;
+using namespace std;
+
+TextureHolder* TextureHolder::m_s_Instance = nullptr;
 
 TextureHolder::TextureHolder()
 {
-    // if there is no instance of this class, i.e. null pointer, then we want to assign itself to itself (not confusing at all right?)
-    assert(instance == nullptr);
-    instance = this;
+	assert(m_s_Instance == nullptr);
+	m_s_Instance = this;
 }
 
-Texture& TextureHolder::getTexture(string const& filename)
+sf::Texture& TextureHolder::getTexture(std::string const& filename)
 {
-    // getting the variable "textures", and assigning it to m
-    // we use the arrow operator, because instance is a pointer, and we want one value in "instance"
-    auto m = instance->textures;
-    // find returns key (filename) & value (the actual texture) IF IT EXISTS
-    auto keyValuePair = m.find("imgs/" + filename);
-    // if keyValuePair DOES NOT EQUAL to out of bounds, i.e. it exists in m
-    if (keyValuePair != m.end())
-    {
-        // then return the value
-        // second basically means value
-        return keyValuePair->second;
-    }
-    else
-    {
-        // IF IT IS OUT BOUNDS, THEN WE CREATE IT IN MAP
-        // auto&, figure out the type, but make it a reference
-        // we "connecting" texture and m[filename], so, when we do loadFromFile, it's going to add this to m[filename],
-        // which is instance->textures
-        auto& texture = m[filename]; // key
-        texture.loadFromFile(filename); // value
-        return texture; 
-        // alternative would be to do:
-        // m[filename].loadFromFile(filename)
-        // value m.find(filename)->second
-    }
+	// Get a reference to m_Textures using m_S_Instance
+	auto& m = m_s_Instance->m_Textures;
+	// auto is the equivalent of map<string, Texture>
+
+	// Create an iterator to hold a key-value-pair (kvp)
+	// and search for the required kvp
+	// using the passed in file name
+	auto keyValuePair = m.find(filename);
+	// auto is equivelant of map<string, Texture>::iterator
+	
+		
+	// Did we find a match?
+	if (keyValuePair != m.end())
+	{
+		// Yes
+		// Return the texture,
+		// the second part of the kvp, the texture
+		return keyValuePair->second;
+	}
+	else
+	{
+		// File name not found
+		// Create a new key value pair using the filename
+		auto& texture = m[filename];
+		// Load the texture from file in the usual way
+		texture.loadFromFile(filename);
+
+		// Return the texture to the calling code
+		return texture;
+	}
 }
