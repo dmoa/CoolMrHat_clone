@@ -1,5 +1,7 @@
 #include "Player.h"
 
+
+#include <math.h>
 //#include <iostream>
 
 Player::Player(Texture* _textureRight, sf::Texture* _textureLeft)
@@ -26,6 +28,14 @@ Player::Player(Texture* _textureRight, sf::Texture* _textureLeft)
 Sprite Player::getSprite() 
 {
     return sprite;
+}
+
+Sprite Player::getDrawableSprite(int scale)
+{
+    Sprite tempSprite = sprite;
+    tempSprite.setPosition(round(sprite.getPosition().x / scale) * scale, round(sprite.getPosition().y / scale) * scale);
+
+    return tempSprite;
 }
 
 void Player::moveLeft(Time deltaTime) 

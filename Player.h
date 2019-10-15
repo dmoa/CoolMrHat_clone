@@ -30,6 +30,7 @@ class Player
     public:
         Player(Texture* _textureRight, Texture* _textureLeft);
         Sprite getSprite();
+        Sprite getDrawableSprite(int scale);
         void moveLeft(Time deltaTime);
         void moveRight(Time deltaTime);
         void stopX();

@@ -1,9 +1,13 @@
 #include "Enemy.h"
 #include <iostream>
+
+#include <math.h>
 // we pass a reference, it holds the memory address, we did this by dereferencing our texture variable in main.cpp
 // we do this so we avoid creating a copy of texture, which is what would happen if we just pass in a variable
-Enemy::Enemy(Texture* _textureRight, Texture* _textureLeft, Texture* _textureRight2, Texture* _textureLeft2, int _facingRight)
+Enemy::Enemy(Texture* _textureRight, Texture* _textureLeft, Texture* _textureRight2, Texture* _textureLeft2, 
+            int _facingRight, Texture* _hatTexture)
 {
+    hat = Hat(_hatTexture);
     textureRight = _textureRight;
     textureLeft = _textureLeft;
     textureRight2 = _textureRight2;
@@ -41,6 +45,18 @@ Enemy::Enemy(Texture* _textureRight, Texture* _textureLeft, Texture* _textureRig
 Sprite Enemy::getSprite()
 {
     return sprite;
+}
+
+Sprite Enemy::getDrawableSprite(int scale)
+{
+    Sprite tempSprite = sprite;
+    tempSprite.setPosition(round(sprite.getPosition().x / scale) * scale, round(sprite.getPosition().y / scale) * scale);
+    return tempSprite;
+}
+
+Hat Enemy::getHat()
+{
+    return hat;
 }
 
 void Enemy::die()
@@ -141,4 +157,6 @@ void Enemy::update(Time deltaTime, Platform* platforms, int numPlatforms)
     {
         sprite.setPosition(sprite.getPosition().x + xv * deltaTime.asSeconds(), sprite.getPosition().y);
     }
+
+    hat.setPosition(sprite.getPosition().x, sprite.getPosition().y - 24);
 }

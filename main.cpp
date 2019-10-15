@@ -11,7 +11,7 @@ using namespace sf;
 
 const int WW = 384;
 const int WH = 800;
-
+const int scale = 4;
 
 #include "Hat.hpp"
 #include "Platform.hpp"
@@ -24,10 +24,12 @@ const int WH = 800;
 
 int main() 
 {
+
+
     RenderWindow window(VideoMode(WW, WH), "Cool Mr Hat Clone");
     window.setVerticalSyncEnabled(true);
 
-    TextureHolder::getTexture("playerRight.png");
+   //Texture& texrtureTry = TextureHolder::getTexture("playerRight.png");
 
     Texture playerTextureRight;
     playerTextureRight.loadFromFile("imgs/playerRight.png");
@@ -56,7 +58,7 @@ int main()
     }
 
     std::vector <Enemy> enemies;
-    enemies.push_back(Enemy (&enemyTextureRight, &enemyTextureLeft, &enemyTextureRight2, &enemyTextureLeft2, true));
+    enemies.push_back(Enemy (&enemyTextureRight, &enemyTextureLeft, &enemyTextureRight2, &enemyTextureLeft2, true, &hatTextures[0]));
     float enemySpawnF = 2;
     float enemySpawnTimer = enemySpawnF;
 
@@ -158,9 +160,10 @@ int main()
         if (enemySpawnTimer < 0)
         {
             enemySpawnTimer = enemySpawnF;
-            srand(time(0));
             int direction = rand() % 2;
-            enemies.push_back(Enemy (&enemyTextureRight, &enemyTextureLeft, &enemyTextureRight2, &enemyTextureLeft2, direction));
+            int hatIndex = rand() % 3;
+            enemies.push_back(Enemy (&enemyTextureRight, &enemyTextureLeft, &enemyTextureRight2, 
+                                    &enemyTextureLeft2, direction, &hatTextures[hatIndex]));
         }
 
         for (int i = 0; i < enemies.size(); i++)
@@ -172,14 +175,15 @@ int main()
         }
     
         window.clear();
-        window.draw(player.getSprite());
+        window.draw(player.getDrawableSprite(scale));
         for (int i = 0; i < numPlatforms; i++)
         {
             window.draw(platforms[i].getSprite());
         }
         for (int i = 0; i < enemies.size(); i++)
         {
-            window.draw(enemies[i].getSprite());
+            window.draw(enemies[i].getDrawableSprite(scale));
+            window.draw(enemies[i].getHat().getDrawableSprite(scale));
         }
         for (int i = 0; i < player.getNumHats(); i++)
         {

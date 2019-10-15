@@ -8,8 +8,10 @@ class Hat
         Sprite sprite;
         Texture* texture;
     public:
+        Hat();
         Hat(Texture* _texture);
         Sprite getSprite();
+        Sprite getDrawableSprite(int scale);
         void update(Time deltaTime);
         void setPosition(float x, float y);
 };
