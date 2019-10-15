@@ -1,2 +1,27 @@
+# paths on MAC OSX
+SFML_LIB = -I/Users/Hipster/SFML/lib
+SFML_INCLUDE = -I/Users/Hipster/SFML/include
+SFML_FRAMEWORKS = -I/Library/Frameworks
+
+LIBS = -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-network -lsfml-system
+CXX = g++
+CXXFLAGS = -g -std=c++11
+
 all:
-	g++ main.cpp -o main.exe -DSFML_STATIC -I C:\SFML\include -L C:\SFML_build\lib -lsfml-graphics-s -lsfml-window-s -lsfml-audio-s -lsfml-system-s -lopengl32 -lwinmm -lgdi32 
+
+# %.0: %.cpp
+# 	$(CXX) -c $< $(CXXFLAGS) -o %@
+
+# %.o: %.hpp
+# 	$(CXX) -c $< -o $@
+
+# main: main.o
+# 	@echo "** Building it!"
+# 	$(CXX) -o main $(LIBS)
+
+	# $(CXX) -c "main.cpp" -o main.o 
+	
+	$(CXX) "main.cpp" -o main $(LIBS)
+
+install:
+	@echo "doing the thing"
